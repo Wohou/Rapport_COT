@@ -10,7 +10,7 @@ change_short = []
 net_position = []
 data = []
 
-chosen_currency = st.selectbox('Selectionne un actif', ['EUR', 'USD', 'AUD', 'BRL', 'BTC', 'CAD', 'CHF', 'COPPER', 'DOW JONES', 'ETH', 'GAS', 'GBP', 'GOLD', 'JPY', 'MXN', 'NASDAQ', 'NZD', 'OIL', 'S&P 500', 'SILVER', 'ZAR'])
+chosen_currency = st.selectbox('Selectionne un actif', ['EUR', 'USD', 'AUD', 'BRL', 'BTC', 'CAD', 'CHF', 'COPPER', 'DOW JONES', 'ETH', 'GAS', 'GBP', 'GOLD', 'JPY', 'MXN', 'NASDAQ-100', 'NZD', 'OIL', 'S&P 500', 'SILVER', 'ZAR'])
 chosen_file_name = "csv/" + chosen_currency + "_27-06-23.csv"
 
 with open(chosen_file_name, newline="") as file:
@@ -24,7 +24,7 @@ chosen_date = st.select_slider('Selectionne une date', dates)
 
 with open(chosen_file_name, newline="") as file:
     reader = csv.reader(file, delimiter=",")
-    next(reader)  # Ignorer la première ligne (en-tête)
+    next(reader)
 
     for row in reader:
         date = row[0]
@@ -34,7 +34,6 @@ with open(chosen_file_name, newline="") as file:
         change_short_value = int(row[4])
         net_position_value = int(row[5])
 
-        # Ajouter les valeurs aux tableaux correspondants
         change_long.append(change_long_value)
         change_short.append(change_short_value)
         net_position.append(net_position_value)
