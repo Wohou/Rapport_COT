@@ -49,5 +49,5 @@ def format_value(value):
     color = "red" if value < 0 else "green"
     return "color: %s" % color
 
-df_styled = df.style.applymap(format_value, subset=["Change long", "change short", "Net position"])
+df_styled = df.style.applymap(format_value, subset=["Change long", "Change short", "Net position"])
 st.dataframe(df_styled, hide_index=True, use_container_width=True, height=3500)
