@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.colors as mcolors
 import csv
 
 st.header("Rapport COT")
@@ -46,18 +45,9 @@ with open(chosen_file_name, newline="") as file:
 
 st.header(chosen_currency)
 df = pd.DataFrame(data, columns=["Date", "Change long", "Change short", "Net position"])
-def format_value(value, column_name):
-    if column_name == "net_position":
-        cmap = mcolors.LinearSegmentedColormap.from_list("", ["darkred", "white", "darkgreen"])
-        norm = mcolors.Normalize(vmin=-df["net_position"].max(), vmax=df["net_position"].max())
-        color = mcolors.rgb2hex(cmap(norm(value)))
-        return f"background-color: {color}"
-    else:
-        color = "red" if value < 0 else "green"
-        return f"color: {color}"
+def format_value(value):
+    color = "red" if value < 0 else "green"
+    return "color: %s" % color
 
-df_styled = df.style.applymap(lambda x: format_value(x, "Change long"), subset=["Change long"]) \
-                      .applymap(lambda x: format_value(x, "Change short"), subset=["Change short"]) \
-                      .applymap(lambda x: format_value(x, "Net position"), subset=["Net position"])
-
+df_styled = df.style.applymap(format_value, subset=["Change long", "change short", "Net position"])
 st.dataframe(df_styled, hide_index=True, use_container_width=True, height=3500)
