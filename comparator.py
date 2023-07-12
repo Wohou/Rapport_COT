@@ -61,13 +61,14 @@ def get_nearest_date(dates):
 def get_next_date():
     dates = []
     today = datetime.today()
-    formadted_today = today.strftime("%B-%d-%Y")
     with open("next_report.csv", newline="") as file:
         reader = csv.reader(file, delimiter=",")
         for row in reader:
             next_date = row[0] + " " + row[1] + " " + row[2]
             dates.append(next_date)
-    st.text("Date du prochain rapport: " + dates[0])
+            if len(row) > 3 and reader.line_num == 1:
+                st.text("Date du publication retardée (Jour Férié)")
+        st.text("Date du prochain rapport: " + dates[0])
 
 get_next_date()
 st.header(chosen_currency)
@@ -77,4 +78,4 @@ def format_value(value):
     return "color: %s" % color
 
 df_styled = df.style.applymap(format_value, subset=["Change long", "Change short", "Net position"])
-st.dataframe(df_styled, hide_index=True, use_container_width=True, height=3500)
+st.dataframe(df_styled, hide_index=True, use_container_width=True)
