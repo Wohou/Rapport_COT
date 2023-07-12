@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime, timedelta
+import locale
 import csv
 
 st.header("Rapport COT")
@@ -10,7 +12,7 @@ change_short = []
 net_position = []
 data = []
 
-chosen_currency = st.selectbox('Selectionne un actif', ['EUR', 'USD', 'AUD', 'BRL', 'BTC', 'CAD', 'CHF', 'COPPER', 'DOW JONES', 'ETH', 'GAS', 'GBP', 'GOLD', 'JPY', 'MXN', 'NASDAQ-100', 'NZD', 'OIL', 'S&P 500', 'SILVER', 'ZAR'])
+chosen_currency = st.selectbox('Selectionne un actif', ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'JPY', 'AUD', 'NZD', 'MXN', 'BRL', 'ZAR', 'BTC', 'ETH', 'OIL', 'GAS', 'GOLD', 'SILVER', 'COPPER', 'S&P 500', 'NASDAQ-100', 'DOW JONES'])
 chosen_file_name = "csv/" + chosen_currency + "_27-06-23.csv"
 
 with open(chosen_file_name, newline="") as file:
@@ -42,6 +44,38 @@ with open(chosen_file_name, newline="") as file:
         if date == chosen_date:
             break
 
+def Get_next_date():
+    locale.setlocale(locale.LC_TIME, "fr_FR")
+    file_path = "next_report.csv"
+    mois_en_fr = {
+    "January": "janvier",
+    "February": "février",
+    "March": "mars",
+    "April": "avril",
+    "May": "mai",
+    "June": "juin",
+    "July": "juillet",
+    "August": "août",
+    "September": "septembre",
+    "October": "octobre",
+    "November": "novembre",
+    "December": "décembre"
+    }
+    dates = []
+    with open(file_path, "r") as file:
+        csv_reader = csv.reader(file)
+        for row in csv_reader:
+            mois, jour, annee = row[0], row[1], row[2]
+            mois_fr = mois_en_fr.get(mois, mois)
+            date = datetime.strptime(f"{jour} {mois_fr} {annee}", "%d %B %Y")
+            dates.append(date)
+    aujourd_hui = datetime.today()
+    date_plus_proche = min(dates, key=lambda date: abs(date - aujourd_hui))
+    nb_jours = (date_plus_proche - aujourd_hui).days + 1
+    date_formatee = date_plus_proche.strftime("%d %B %Y")
+    st.text("Le prochain rapport COT sortira le " + date_formatee + " il reste alors " + str(nb_jours) + " jours.")
+
+Get_next_date()
 st.header(chosen_currency)
 df = pd.DataFrame(data, columns=["Date", "Change long", "Change short", "Net position"])
 def format_value(value):
