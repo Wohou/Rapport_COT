@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 import csv
 
 st.header("Rapport COT")
@@ -42,29 +42,34 @@ with open(chosen_file_name, newline="") as file:
         data.append([date, change_long_value, change_short_value, net_position_value])
         if date == chosen_date:
             break
-
-def jours_entre_dates(date1, date2):
-    difference = date2 - date1
     
+def get_nearest_date(dates):
+    today = datetime.today()
+    nearest_date = None
+    min_difference = float('inf')
 
-# def Get_next_date():
-#     file_path = "next_report.csv"
-#     dates = []
-#     with open(file_path, "r") as file:
-#         csv_reader = csv.reader(file)
-#         for row in csv_reader:
-#             mois, jour, annee = row[0], row[1], row[2]
-#             date_str = f"{mois} {jour} {annee}"
-#             date = datetime.strptime(date_str, "%B %d %Y")
-#             dates.append(date)
+    for date_str in dates:
+        date = datetime.strptime(date_str, "%B,%d,%Y")
+        difference = abs(date - today).days
 
-#     aujourd_hui = datetime.today()
-#     date_plus_proche = min(dates, key=lambda date: abs(date - aujourd_hui))
-#     nb_jours = (date_plus_proche - aujourd_hui).days + 1
-#     date_formatee = date_plus_proche.strftime("%d %B %Y")
-#     st.text("Le prochain rapport COT sortira le " + date_formatee + " il reste alors " + str(nb_jours) + " jours.")
+        if difference < min_difference:
+            min_difference = difference
+            nearest_date = date
 
-# Get_next_date()
+    return nearest_date
+
+def get_next_date():
+    dates = []
+    today = datetime.today()
+    formadted_today = today.strftime("%B-%d-%Y")
+    with open("next_report.csv", newline="") as file:
+        reader = csv.reader(file, delimiter=",")
+        for row in reader:
+            next_date = row[0] + " " + row[1] + " " + row[2]
+            dates.append(next_date)
+    st.text("Date du prochain rapport: " + dates[0])
+
+get_next_date()
 st.header(chosen_currency)
 df = pd.DataFrame(data, columns=["Date", "Change long", "Change short", "Net position"])
 def format_value(value):
