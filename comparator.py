@@ -70,7 +70,7 @@ def Get_next_date():
     aujourd_hui = datetime.today()
     date_plus_proche = min(dates, key=lambda date: abs(date - aujourd_hui))
     nb_jours = (date_plus_proche - aujourd_hui).days + 1
-    date_formatee = date_plus_proche.strftime("%d %B %Y")
+    date_formatee = date_plus_proche.strftime("%B %d %Y")
     st.text("Le prochain rapport COT sortira le " + date_formatee + " il reste alors " + str(nb_jours) + " jours.")
 
 Get_next_date()
