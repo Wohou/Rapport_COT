@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
-import locale
 import csv
 
 st.header("Rapport COT")
@@ -45,7 +44,6 @@ with open(chosen_file_name, newline="") as file:
             break
 
 def Get_next_date():
-    locale.setlocale(locale.LC_TIME, "fr_FR")
     file_path = "next_report.csv"
     mois_en_fr = {
     "January": "janvier",
