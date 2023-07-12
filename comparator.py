@@ -43,37 +43,28 @@ with open(chosen_file_name, newline="") as file:
         if date == chosen_date:
             break
 
-def Get_next_date():
-    file_path = "next_report.csv"
-    mois_en_fr = {
-    "January": "janvier",
-    "February": "février",
-    "March": "mars",
-    "April": "avril",
-    "May": "mai",
-    "June": "juin",
-    "July": "juillet",
-    "August": "août",
-    "September": "septembre",
-    "October": "octobre",
-    "November": "novembre",
-    "December": "décembre"
-    }
-    dates = []
-    with open(file_path, "r") as file:
-        csv_reader = csv.reader(file)
-        for row in csv_reader:
-            mois, jour, annee = row[0], row[1], row[2]
-            mois_fr = mois_en_fr.get(mois, mois)
-            date = datetime.strptime(f"{jour} {mois_fr} {annee}", "%d %B %Y")
-            dates.append(date)
-    aujourd_hui = datetime.today()
-    date_plus_proche = min(dates, key=lambda date: abs(date - aujourd_hui))
-    nb_jours = (date_plus_proche - aujourd_hui).days + 1
-    date_formatee = date_plus_proche.strftime("%B %d %Y")
-    st.text("Le prochain rapport COT sortira le " + date_formatee + " il reste alors " + str(nb_jours) + " jours.")
+def jours_entre_dates(date1, date2):
+    difference = date2 - date1
+    
 
-Get_next_date()
+# def Get_next_date():
+#     file_path = "next_report.csv"
+#     dates = []
+#     with open(file_path, "r") as file:
+#         csv_reader = csv.reader(file)
+#         for row in csv_reader:
+#             mois, jour, annee = row[0], row[1], row[2]
+#             date_str = f"{mois} {jour} {annee}"
+#             date = datetime.strptime(date_str, "%B %d %Y")
+#             dates.append(date)
+
+#     aujourd_hui = datetime.today()
+#     date_plus_proche = min(dates, key=lambda date: abs(date - aujourd_hui))
+#     nb_jours = (date_plus_proche - aujourd_hui).days + 1
+#     date_formatee = date_plus_proche.strftime("%d %B %Y")
+#     st.text("Le prochain rapport COT sortira le " + date_formatee + " il reste alors " + str(nb_jours) + " jours.")
+
+# Get_next_date()
 st.header(chosen_currency)
 df = pd.DataFrame(data, columns=["Date", "Change long", "Change short", "Net position"])
 def format_value(value):
