@@ -1,83 +1,99 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
 import csv
+from datetime import datetime
 
+st.set_page_config(
+    page_title="Comparator COT",
+    page_icon=":money_with_wings:",
+    layout="wide",
+)
 st.header("Rapport COT")
 
-dates = []
-change_long = []
-change_short = []
-net_position = []
-data = []
+def Get_dates():
+    dates = []
+    with open("csv/USD.csv", newline="") as file:
+        reader = csv.reader(file, delimiter=",")
+        next(reader)
+        for row in reader:
+            date = row[0]
+            dates.append(date)
+    return dates
 
-chosen_currency = st.selectbox('Selectionne un actif', ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'JPY', 'AUD', 'NZD', 'MXN', 'BRL', 'ZAR', 'BTC', 'ETH', 'OIL', 'GAS', 'WHEAT', 'GOLD', 'SILVER', 'COPPER', 'S&P 500', 'NASDAQ-100', 'DOW JONES'])
-chosen_file_name = "csv/" + chosen_currency + ".csv"
+chosen_date = st.select_slider('Sélectionnez une date', Get_dates())
+col1, col2 = st.columns(2)
 
-with open(chosen_file_name, newline="") as file:
+with col1:
+    chosen_currency_1 = st.selectbox('Premier actif', ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'JPY', 'AUD', 'NZD', 'MXN', 'BRL', 'ZAR', 'BTC', 'ETH', 'OIL', 'GAS', 'WHEAT', 'GOLD', 'SILVER', 'COPPER', 'S&P 500', 'NASDAQ-100', 'DOW JONES'])
+    chosen_file_name_1 = "csv/" + chosen_currency_1 + ".csv"
+
+with col2:
+    chosen_currency_2 = st.selectbox('Deuxième actif', ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'JPY', 'AUD', 'NZD', 'MXN', 'BRL', 'ZAR', 'BTC', 'ETH', 'OIL', 'GAS', 'WHEAT', 'GOLD', 'SILVER', 'COPPER', 'S&P 500', 'NASDAQ-100', 'DOW JONES'])
+    chosen_file_name_2 = "csv/" + chosen_currency_2 + ".csv"
+
+dates_1 = []
+change_long_1 = []
+change_short_1 = []
+net_position_1 = []
+data_1 = []
+
+with open(chosen_file_name_1, newline="") as file:
     reader = csv.reader(file, delimiter=",")
     next(reader)
     for row in reader:
         date = row[0]
-        dates.append(date)
-
-chosen_date = st.select_slider('Selectionne une date', dates)
-
-with open(chosen_file_name, newline="") as file:
-    reader = csv.reader(file, delimiter=",")
-    next(reader)
-
-    for row in reader:
-        date = row[0]
-        long_value = int(row[1])
-        short_value = int(row[2])
+        dates_1.append(date)
         change_long_value = int(row[3])
         change_short_value = int(row[4])
         net_position_value = int(row[5])
 
-        change_long.append(change_long_value)
-        change_short.append(change_short_value)
-        net_position.append(net_position_value)
+        change_long_1.append(change_long_value)
+        change_short_1.append(change_short_value)
+        net_position_1.append(net_position_value)
         
-        data.append([date, change_long_value, change_short_value, net_position_value])
+        data_1.append([date, change_long_value, change_short_value, net_position_value])
         if date == chosen_date:
             break
-    
-def get_nearest_date(dates):
-    today = datetime.today()
-    nearest_date = None
-    min_difference = float('inf')
 
-    for date_str in dates:
-        date = datetime.strptime(date_str, "%B,%d,%Y")
-        difference = abs(date - today).days
+dates_2 = []
+change_long_2 = []
+change_short_2 = []
+net_position_2 = []
+data_2 = []
 
-        if difference < min_difference:
-            min_difference = difference
-            nearest_date = date
+with open(chosen_file_name_2, newline="") as file:
+    reader = csv.reader(file, delimiter=",")
+    next(reader)
 
-    return nearest_date
+    for row in reader:
+        date = row[0]
+        dates_2.append(date)
+        change_long_value = int(row[3])
+        change_short_value = int(row[4])
+        net_position_value = int(row[5])
 
-def get_next_date():
-    dates = []
-    today = datetime.today()
-    with open("next_report.csv", newline="") as file:
-        reader = csv.reader(file, delimiter=",")
-        for row in reader:
-            next_date = row[0] + " " + row[1] + " " + row[2]
-            dates.append(next_date)
-            if len(row) > 3 and reader.line_num == 1:
-                st.text("Date du publication retardée (Jour Férié)")
-        st.text("Date du prochain rapport: " + dates[0])
+        change_long_2.append(change_long_value)
+        change_short_2.append(change_short_value)
+        net_position_2.append(net_position_value)
+        
+        data_2.append([date, change_long_value, change_short_value, net_position_value])
+        if date == chosen_date:
+            break
 
-get_next_date()
-st.header(chosen_currency)
 def format_value(value):
     color = "red" if value < 0 else "green"
     return "color: %s" % color
 
-df = pd.DataFrame(data, columns=["Date", "Change long", "Change short", "Net position"])
-df_styled = df.style.applymap(format_value, subset=["Change long", "Change short", "Net position"])
-pd.set_option('display.max_rows', None)
-st.text("Il y a " + str(len(df)) + " donées afficher.")
-st.dataframe(df_styled, hide_index=True, use_container_width=True, height=len(df) * 36)
+df_1 = pd.DataFrame(data_1, columns=["Date", "Change long", "Change short", "Net position"])
+df_1_styled = df_1.style.applymap(format_value, subset=["Change long", "Change short", "Net position"])
+
+df_2 = pd.DataFrame(data_2, columns=["Date", "Change long", "Change short", "Net position"])
+df_2_styled = df_2.style.applymap(format_value, subset=["Change long", "Change short", "Net position"])
+
+with col1:
+    st.header(chosen_currency_1)
+    st.dataframe(df_1_styled, hide_index=True, use_container_width=True, height=len(df_1) * 36)
+
+with col2:
+    st.header(chosen_currency_2)
+    st.dataframe(df_2_styled, hide_index=True, use_container_width=True, height=len(df_2) * 36)
