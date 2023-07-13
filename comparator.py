@@ -11,8 +11,8 @@ change_short = []
 net_position = []
 data = []
 
-chosen_currency = st.selectbox('Selectionne un actif', ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'JPY', 'AUD', 'NZD', 'MXN', 'BRL', 'ZAR', 'BTC', 'ETH', 'OIL', 'GAS', 'GOLD', 'SILVER', 'COPPER', 'S&P 500', 'NASDAQ-100', 'DOW JONES'])
-chosen_file_name = "csv/" + chosen_currency + "_27-06-23.csv"
+chosen_currency = st.selectbox('Selectionne un actif', ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'JPY', 'AUD', 'NZD', 'MXN', 'BRL', 'ZAR', 'BTC', 'ETH', 'OIL', 'GAS', 'WHEAT', 'GOLD', 'SILVER', 'COPPER', 'S&P 500', 'NASDAQ-100', 'DOW JONES'])
+chosen_file_name = "csv/" + chosen_currency + ".csv"
 
 with open(chosen_file_name, newline="") as file:
     reader = csv.reader(file, delimiter=",")
@@ -72,10 +72,12 @@ def get_next_date():
 
 get_next_date()
 st.header(chosen_currency)
-df = pd.DataFrame(data, columns=["Date", "Change long", "Change short", "Net position"])
 def format_value(value):
     color = "red" if value < 0 else "green"
     return "color: %s" % color
 
+df = pd.DataFrame(data, columns=["Date", "Change long", "Change short", "Net position"])
 df_styled = df.style.applymap(format_value, subset=["Change long", "Change short", "Net position"])
-st.dataframe(df_styled, hide_index=True, use_container_width=True)
+pd.set_option('display.max_rows', None)
+st.text("Il y a " + str(len(df)) + " donées afficher.")
+st.dataframe(df_styled, hide_index=True, use_container_width=True, height=len(df) * 36)
