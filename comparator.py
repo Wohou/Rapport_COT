@@ -8,9 +8,10 @@ st.set_page_config(
     page_icon=":money_with_wings:",
     layout="wide",
 )
-st.header("Rapport COT")
 
+st.markdown('<h3 style="text-align:center;font-weight:bold;font-size:40px;">Comparateur d\'actifs financiers </h3>', unsafe_allow_html=True)
 tab1, tab2 = st.tabs(["Comparateur", "Classement"])
+
 
 with tab1:
     def Get_dates():
@@ -33,9 +34,10 @@ with tab1:
                 dates.append(next_date)
                 if len(row) > 3 and reader.line_num == 1:
                     st.text("Date du publication retardée (Jour Férié)")
-            st.text("Date du prochain rapport: " + dates[0])
+            st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {dates[0]})</h3>', unsafe_allow_html=True)
 
-    chosen_date = st.select_slider('Sélectionnez une date', Get_dates(), value=Get_dates()[25])
+    st.markdown('<p style="margin-top:20px"></p>', unsafe_allow_html=True)
+    chosen_date = st.select_slider('Selectionne une date', Get_dates(), value=Get_dates()[25])
     get_next_date()
     col1, col2 = st.columns(2)
 
