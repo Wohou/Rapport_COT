@@ -18,6 +18,14 @@ def change_date(date_str):
     jour = date_str[4:]
     return (jour + "/" + mois + "/" + annee)
 
+url_test = f"{base_url}{dates[0]}{id}"
+response_test = requests.get(url_test)
+if response_test.status_code != 200:
+    raise Exception("Error: API request unsuccessful.")
+if response_test.json() == []:
+    print("Error: ID not found.")
+    exit()
+
 name = input("Enter a name for the CSV file: ")
 csv_file = "csv/" + name + ".csv"
 with open(csv_file, "w") as file:
