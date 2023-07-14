@@ -1,5 +1,12 @@
 import requests
 
+# Add a new currency: - Catch the id on the CFTC website and give it when asked for. (XXXXXXF) (If the is a '+' in the id add '%2B' instead)
+#                     - Add the id and the name to their respective list "ids" and "ids_name" in the CSV_Updater.py file
+#                     - The order is important you have to put the name and the id at the same index in their respective list
+#                     - Add the name in the list of currency in the comparator.py file
+#
+#                     - Don't forget to update the 'dates' list in this files to always have a up to date CSV file. 
+
 base_url = "https://publicreporting.cftc.gov/resource/6dca-aqww.json?id="
 id = input("Enter a ID: ") + "F"
 dates = ["230703","230627","230620","230613","230606","230530","230523","230516","230509","230502","230425","230418","230411","230404","230328","230321","230314","230307","230228","230221","230214","230207","230131","230124","230117","230110","230103","221227","221220","221213","221206","221129","221122","221115","221108","221101","221025","221018","221011","221004","220927","220920","220913","220906","220830","220823","220816","220809","220802","220726","220719","220712","220705","220628","220621","220614","220607","220531","220524","220517","220510","220503","220426","220419","220412","220405","220329","220322","220315","220308","220301","220222","220215","220208","220201","220125","220118","220111","220104"

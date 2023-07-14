@@ -74,6 +74,8 @@ with tab1:
     get_next_date()
     col1, col2 = st.columns(2)
 
+
+#------Here Update the list of currency when you add a new one, for both selectbox | Order is impoortant---------------------------------#
     with col1:
         chosen_currency_1 = st.selectbox('Premier actif', ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'JPY', 'AUD', 'NZD', 'MXN', 'BRL', 'ZAR', 'BTC', 'ETH', 'OIL', 'GAS', 'WHEAT', 'GOLD', 'SILVER', 'COPPER', 'S&P 500', 'NASDAQ-100', 'DOW JONES'])
         chosen_file_name_1 = "csv/" + chosen_currency_1 + ".csv"
