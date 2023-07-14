@@ -8,6 +8,7 @@ ids = ["232741F","102741F","133741F","090741F","092741F","085692F","124603F","14
 
 # for i in range(len(ids)):
 #     print(ids_name[i] + " = " + ids[i])
+# Change date YY/MM/DD
 
 date = "230703"
 
