@@ -61,8 +61,8 @@ with tab1:
                     st.text("Date du publication retardée (Jour Férié)")
             date_formated = dates[0][3] + dates[0][4] + " " + dates[0][0] + dates[0][1] + " " + dates[0][6] + dates[0][7]
             date = datetime.strptime(date_formated, '%d %m %y')
-            date_for = date.strftime('%d %B %Y')
-            st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {date_for})</h3>', unsafe_allow_html=True)
+            date_formated = date.strftime('%d %B %Y')
+            st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {date_formated})</h3>', unsafe_allow_html=True)
             str_date = dates[0][0] + dates[0][1] + "/" + dates[0][3] + dates[0][4] + "/" + dates[0][6] + dates[0][7]
             next_date = datetime.strptime(str_date, '%m/%d/%y')
             if next_date.date() == today.date():
