@@ -9,7 +9,7 @@ ids = ["232741F","102741F","133741F","090741F","092741F","085692F","124603F","14
 # for i in range(len(ids)):
 #     print(ids_name[i] + " = " + ids[i])
 
-date = "230714"
+date = "230703"
 
 def change_date(date_str):
     annee = date_str[:2]
@@ -58,12 +58,12 @@ for id in ids:
     print("Actually collecting data of " + name + " from " + change_date(date) + "...")
     new_line = change_date(date) + "," + key_find[1] + "," + key_find[2] + "," + key_find[3] + "," + key_find[4] + "," + str(int(key_find[1]) - int(key_find[2])) + ",\n"
     if lines[+1] != new_line:
+        iteration += 1
         lines.insert(1, new_line)
     else:
-        iteration += 1
-        print("Data already up to date in " + name + ".csv")
+        print("\tData already up to date in " + name + ".csv")
 
     with open(csv_file, "w") as file:
         file.writelines(lines)
 
-print("All dones!" + iteration + " files updated.")
+print("All dones! " + str(iteration) + " files updated.")
