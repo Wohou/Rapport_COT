@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import csv
-from datetime import datetime
+from datetime import datetime, timedelta
 
 st.set_page_config(
     page_title="Comparator COT",
@@ -9,11 +9,36 @@ st.set_page_config(
     layout="wide",
 )
 
-st.markdown('<h3 style="text-align:center;font-weight:bold;font-size:40px;">Comparateur d\'actifs financiers </h3>', unsafe_allow_html=True)
+#-------------------Date of the next report--------------------------#
+def update_next_report():
+    with open("next_report.csv", newline="") as file:
+        reader = csv.reader(file, delimiter=",")
+        rows = list(reader)
+
+    today = datetime.today()
+
+    if len(rows) > 0:
+        day, month, year = str(rows[0][0]), str(rows[0][1]), str(rows[0][2])
+        str_date = day + "/" + month + "/" + year
+        next_date = datetime.strptime(str_date, '%m/%d/%y')
+        if next_date + timedelta(days=1) < today:
+            rows = rows[1:]
+
+    with open("next_report.csv", "w", newline="") as file:
+        writer = csv.writer(file, delimiter=",")
+        writer.writerows(rows)
+
+update_next_report()
+
+#-------------------------Title------------------------------#
+
+st.markdown('<h3 style="text-align:center;font-weight:bold;font-size:50px;">Commitments of Traders</h3>', unsafe_allow_html=True)
 tab1, tab2 = st.tabs(["Comparateur", "Classement"])
 
+#-------------------Comparateur Tab--------------------------#
 
 with tab1:
+    st.markdown('<h3 style="text-align:center;font-weight:bold;font-size:40px;">⚖️ Comparateur d\'actifs financiers ⚖️</h3>', unsafe_allow_html=True)
     def Get_dates():
         dates = []
         with open("csv/USD.csv", newline="") as file:
@@ -34,7 +59,15 @@ with tab1:
                 dates.append(next_date)
                 if len(row) > 3 and reader.line_num == 1:
                     st.text("Date du publication retardée (Jour Férié)")
-            st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {dates[0]})</h3>', unsafe_allow_html=True)
+            date_formated = dates[0][3] + dates[0][4] + " " + dates[0][0] + dates[0][1] + " " + dates[0][6] + dates[0][7]
+            date = datetime.strptime(date_formated, '%d %m %y')
+            date_for = date.strftime('%d %B %Y')
+            st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {date_for})</h3>', unsafe_allow_html=True)
+            str_date = dates[0][0] + dates[0][1] + "/" + dates[0][3] + dates[0][4] + "/" + dates[0][6] + dates[0][7]
+            next_date = datetime.strptime(str_date, '%m/%d/%y')
+            if next_date.date() == today.date():
+                st.markdown('<h3 style="text-align:left;font-size:15px;">Un nouveau rapport est disponnible aujourd\'hui!</h3>', unsafe_allow_html=True)
+
 
     st.markdown('<p style="margin-top:20px"></p>', unsafe_allow_html=True)
     chosen_date = st.select_slider('Selectionne une date', Get_dates(), value=Get_dates()[25])
@@ -115,6 +148,10 @@ with tab1:
     with col2:
         st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:30px;">{chosen_currency_2}</h3>', unsafe_allow_html=True)
         st.dataframe(df_2_styled, hide_index=True, use_container_width=True, height=len(df_1) * 36)
+
+
+#-------------------Classement Tab--------------------------#
+
 
 with tab2:
     actifs = ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'JPY', 'AUD', 'NZD', 'MXN', 'BRL', 'ZAR', 'BTC', 'ETH', 'OIL', 'GAS', 'WHEAT', 'GOLD', 'SILVER', 'COPPER', 'S&P 500', 'NASDAQ-100', 'DOW JONES']
