@@ -66,7 +66,7 @@ with tab1:
             str_date = dates[0][0] + dates[0][1] + "/" + dates[0][3] + dates[0][4] + "/" + dates[0][6] + dates[0][7]
             next_date = datetime.strptime(str_date, '%m/%d/%y')
             if next_date.date() == today.date():
-                st.markdown('<h3 style="text-align:left;font-size:15px;">Un nouveau rapport est disponnible aujourd\'hui!</h3>', unsafe_allow_html=True)
+                st.markdown('<h3 style="text-align:left;font-size:15px;">Un nouveau rapport est disponible aujourd\'hui !</h3>', unsafe_allow_html=True)
 
 
     st.markdown('<p style="margin-top:20px"></p>', unsafe_allow_html=True)
