@@ -19,6 +19,19 @@ def change_date(date_str):
 
 iteration = 0
 
+if len(ids) != len(ids_name):
+    print("Error: The number of ids and names are not the same. Please verify the id and name list above.")
+    exit()
+
+url_test = f"{base_url}{date}{ids[0]}"
+response_test = requests.get(url_test)
+if response_test.status_code != 200:
+    print("The API request was unsuccessful.")
+    exit()
+if response_test.json() == []:
+    print("Error: Date may be not valid.")
+    exit()
+
 for id in ids:
     name = ids_name[ids.index(id)]
     csv_file = "csv/" + name + ".csv"
