@@ -5,7 +5,7 @@ import requests
 #                     - The order is important you have to put the name and the id at the same index in their respective list
 #                     - Add the name in the list of currency in the comparator.py file
 #
-#                     - Don't forget to update the 'dates' list in this files to always have a up to date CSV file. 
+#                     - Don't forget to update the 'dates' list in this files to always have a up to date CSV file.
 
 base_url = "https://publicreporting.cftc.gov/resource/6dca-aqww.json?id="
 id = input("Enter a ID: ") + "F"

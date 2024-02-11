@@ -103,7 +103,7 @@ with tab1:
             change_long_1.append(change_long_value)
             change_short_1.append(change_short_value)
             net_position_1.append(net_position_value)
-            
+
             data_1.append([date, change_long_value, change_short_value, net_position_value])
             if date == chosen_date:
                 break
@@ -128,7 +128,7 @@ with tab1:
             change_long_2.append(change_long_value)
             change_short_2.append(change_short_value)
             net_position_2.append(net_position_value)
-            
+
             data_2.append([date, change_long_value, change_short_value, net_position_value])
             if date == chosen_date:
                 break
@@ -157,7 +157,7 @@ with tab1:
 
 with tab2:
     actifs = ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'JPY', 'AUD', 'NZD', 'MXN', 'BRL', 'ZAR', 'BTC', 'ETH', 'OIL', 'GAS', 'WHEAT', 'GOLD', 'SILVER', 'COPPER', 'S&P 500', 'NASDAQ-100', 'DOW JONES']
-    st.markdown('<h3 style="margin-bottom:50px;text-align:center;font-weight:bold;font-size:40px;">📊 Classement Net Position 📊</h3>', unsafe_allow_html=True) 
+    st.markdown('<h3 style="margin-bottom:50px;text-align:center;font-weight:bold;font-size:40px;">📊 Classement Net Position 📊</h3>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     actif_long = []
     actif_short = []
@@ -180,7 +180,7 @@ with tab2:
                 difference_short.append(difference)
                 actif_short.append(actif)
                 actif_name_short.append(actif)
-                
+
     with col1:
         st.markdown('<h3 style="margin-bottom:30px;font-weight:bold;font-size:35px;">📈 Classement Position Long 📈</h3>', unsafe_allow_html=True)
         sorted_data_long = sorted(zip(actif_long, difference_long), key=lambda x: abs(x[1]), reverse=True)
