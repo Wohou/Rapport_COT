@@ -51,15 +51,17 @@ with tab1:
                 dates.append(date)
         return dates
 
-    # data_next_report = update_next_report()
-    # date_formated = data_next_report[0]
-    # st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {date_formated})</h3>', unsafe_allow_html=True)
-    # if data_next_report[1] == True:
-    #     st.markdown('<h3 style="text-align:left;font-size:15px;">Un nouveau rapport est disponible aujourd\'hui !</h3>', unsafe_allow_html=True)
+    def get_next_date():
+        data_next_report = update_next_report()
+        date_formated = data_next_report[0]
+        st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {date_formated})</h3>', unsafe_allow_html=True)
+        if data_next_report[1] == True:
+            st.markdown('<h3 style="text-align:left;font-size:15px;">Un nouveau rapport est disponible aujourd\'hui !</h3>', unsafe_allow_html=True)
 
 
     st.markdown('<p style="margin-top:20px"></p>', unsafe_allow_html=True)
     chosen_date = st.select_slider('Selectionne une date', Get_dates(), value=Get_dates()[25])
+    get_next_date()
     col1, col2 = st.columns(2)
 
 #------Here Update the list of currency when you add a new one, for both selectbox | Order is impoortant---------------------------------#
