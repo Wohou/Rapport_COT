@@ -53,11 +53,23 @@ with tab1:
         return dates
 
     def get_next_date():
-        next_report = update_next_report()
-        date_formated = next_report[0]
-        st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {date_formated})</h3>', unsafe_allow_html=True)
-        if next_report[1] == True:
-            st.markdown('<h3 style="text-align:left;font-size:15px;">Un nouveau rapport est disponible aujourd\'hui !</h3>', unsafe_allow_html=True)
+        dates = []
+        today = datetime.today()
+        with open("next_report.csv", newline="") as file:
+            reader = csv.reader(file, delimiter=",")
+            for row in reader:
+                next_date = row[0] + " " + row[1] + " " + row[2]
+                dates.append(next_date)
+                if len(row) > 3 and reader.line_num == 1:
+                    st.text("Date du publication retardée (Jour Férié)")
+            date_formated = dates[0][3] + dates[0][4] + " " + dates[0][0] + dates[0][1] + " " + dates[0][6] + dates[0][7]
+            date = datetime.strptime(date_formated, '%d %m %y')
+            date_formated = date.strftime('%d %B %Y')
+            st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {date_formated})</h3>', unsafe_allow_html=True)
+            str_date = dates[0][0] + dates[0][1] + "/" + dates[0][3] + dates[0][4] + "/" + dates[0][6] + dates[0][7]
+            next_date = datetime.strptime(str_date, '%m/%d/%y')
+            if next_date.date() == today.date():
+                st.markdown('<h3 style="text-align:left;font-size:15px;">Un nouveau rapport est disponible aujourd\'hui !</h3>', unsafe_allow_html=True)
 
 
     st.markdown('<p style="margin-top:20px"></p>', unsafe_allow_html=True)
