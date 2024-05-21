@@ -53,7 +53,7 @@ with tab1:
         return dates
 
     def get_next_date():
-        next_report = get_next_date()
+        next_report = update_next_report()
         date_formated = next_report[0]
         st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {date_formated})</h3>', unsafe_allow_html=True)
         if next_report[1] == True:
