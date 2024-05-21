@@ -11,27 +11,24 @@ st.set_page_config(
 
 #-------------------Date of the next report--------------------------#
 def update_next_report():
-    list_day = []
     with open("next_report.csv", newline="") as file:
         reader = csv.reader(file, delimiter=",")
-        for row in reader:
-            list_day.append(row[0])
+        rows = list(reader)
 
+    today = datetime.today()
 
-    today = datetime.today().date()
+    if len(rows) > 0:
+        day, month, year = str(rows[0][0]), str(rows[0][1]), str(rows[0][2])
+        str_date = day + "/" + month + "/" + year
+        next_date = datetime.strptime(str_date, '%m/%d/%y')
+        if next_date + timedelta(days=1) < today:
+            rows = rows[1:]
 
-    upcoming_report = []
-    for event in list_day:
-        event_date = datetime.strptime(event, '%m/%d/%y').date()
-        if event_date >= today:
-            upcoming_report.append(event_date)
+    with open("next_report.csv", "w", newline="") as file:
+        writer = csv.writer(file, delimiter=",")
+        writer.writerows(rows)
 
-    if upcoming_report:
-        next_event = min(upcoming_report, key=lambda x: x - today)
-        if next_event == today:
-            return str(next_event.strftime('%d/%B/%Y').replace("/", " ")), True
-        else:
-            return str(next_event.strftime('%d/%B/%Y').replace("/", " ")), False
+update_next_report()
 
 #-------------------------Title------------------------------#
 
