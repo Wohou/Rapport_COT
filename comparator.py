@@ -11,25 +11,27 @@ st.set_page_config(
 
 #-------------------Date of the next report--------------------------#
 def update_next_report():
+    list_day = []
     with open("next_report.csv", newline="") as file:
         reader = csv.reader(file, delimiter=",")
-        rows = list(reader)
+        for row in reader:
+            list_day.append(row[0])
 
-    today = datetime.today()
 
-    if len(rows) > 0:
-        day, month, year = str(rows[0][0]), str(rows[0][1]), str(rows[0][2])
-        str_date = day + "/" + month + "/" + year
-        next_date = datetime.strptime(str_date, '%m/%d/%y')
-        if next_date + timedelta(days=1) < today:
-            rows = rows[1:]
+    today = datetime.today().date()
 
-    with open("next_report.csv", "w", newline="") as file:
-        writer = csv.writer(file, delimiter=",")
-        writer.writerows(rows)
+    upcoming_report = []
+    for event in list_day:
+        event_date = datetime.strptime(event, '%m/%d/%y').date()
+        if event_date >= today:
+            upcoming_report.append(event_date)
 
-update_next_report()
-
+    if upcoming_report:
+        next_event = min(upcoming_report, key=lambda x: x - today)
+        if next_event == today:
+            return str(next_event.strftime('%d/%B/%Y').replace("/", " ")), True
+        else:
+            return str(next_event.strftime('%d/%B/%Y').replace("/", " ")), False
 #-------------------------Title------------------------------#
 
 st.markdown('<h3 style="text-align:center;font-weight:bold;font-size:50px;">Commitments of Traders</h3>', unsafe_allow_html=True)
@@ -50,30 +52,17 @@ with tab1:
         return dates
 
     def get_next_date():
-        dates = []
-        today = datetime.today()
-        with open("next_report.csv", newline="") as file:
-            reader = csv.reader(file, delimiter=",")
-            for row in reader:
-                next_date = row[0] + " " + row[1] + " " + row[2]
-                dates.append(next_date)
-                if len(row) > 3 and reader.line_num == 1:
-                    st.text("Date du publication retardée (Jour Férié)")
-            date_formated = dates[0][3] + dates[0][4] + " " + dates[0][0] + dates[0][1] + " " + dates[0][6] + dates[0][7]
-            date = datetime.strptime(date_formated, '%d %m %y')
-            date_formated = date.strftime('%d %B %Y')
-            st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {date_formated})</h3>', unsafe_allow_html=True)
-            str_date = dates[0][0] + dates[0][1] + "/" + dates[0][3] + dates[0][4] + "/" + dates[0][6] + dates[0][7]
-            next_date = datetime.strptime(str_date, '%m/%d/%y')
-            if next_date.date() == today.date():
-                st.markdown('<h3 style="text-align:left;font-size:15px;">Un nouveau rapport est disponible aujourd\'hui !</h3>', unsafe_allow_html=True)
+        data_next_report = update_next_report()
+        date_formated = data_next_report[0]
+        st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {date_formated})</h3>', unsafe_allow_html=True)
+        if data_next_report[1] == True:
+            st.markdown('<h3 style="text-align:left;font-size:15px;">Un nouveau rapport est disponible aujourd\'hui !</h3>', unsafe_allow_html=True)
 
 
     st.markdown('<p style="margin-top:20px"></p>', unsafe_allow_html=True)
     chosen_date = st.select_slider('Selectionne une date', Get_dates(), value=Get_dates()[25])
     get_next_date()
     col1, col2 = st.columns(2)
-
 
 #------Here Update the list of currency when you add a new one, for both selectbox | Order is impoortant---------------------------------#
     with col1:
