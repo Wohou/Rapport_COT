@@ -10,7 +10,7 @@ ids = ["232741F","102741F","133741F","090741F","092741F","085692F","124603F","14
 #     print(ids_name[i] + " = " + ids[i])
 # Change date YY/MM/DD
 
-date = "250211"
+date = "250218"
 
 def change_date(date_str):
     annee = date_str[:2]
