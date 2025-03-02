@@ -219,4 +219,3 @@ with tab3:
                 status_message.success(array[1])
             else:
                 status_message.error(array[2])
-
