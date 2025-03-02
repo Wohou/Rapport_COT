@@ -35,7 +35,7 @@ def update_next_report():
 #-------------------------Title------------------------------#
 
 st.markdown('<h3 style="text-align:center;font-weight:bold;font-size:50px;">Commitments of Traders</h3>', unsafe_allow_html=True)
-tab1, tab2 = st.tabs(["Comparateur", "Classement"])
+tab1, tab2, tab3 = st.tabs(["Comparateur", "Classement", "Update"])
 
 #-------------------Comparateur Tab--------------------------#
 
@@ -181,3 +181,9 @@ with tab2:
         sorted_data_short = sorted(zip(actif_short, difference_short), key=lambda x: abs(x[1]), reverse=True)
         for i, (actif, difference) in enumerate(sorted_data_short):
             st.markdown(f'<p style="font-weight:bold;font-size:20px;border-radius:2%;">{i+1}. {actif}: <span style="color:#FF0000;">{difference}</span></p>', unsafe_allow_html=True)
+
+with tab3:
+    st.session_state.Valid_date = False
+    push_text = st.secrets["github"]["push_text"]
+
+    st.write(f"Le mot de passe est : `{push_text}`")
