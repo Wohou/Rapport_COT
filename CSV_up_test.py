@@ -26,11 +26,9 @@ def update_data(date):
     response_test = requests.get(url_test)
     if response_test.status_code != 200:
         print("The API request was unsuccessful.")
-        return -1
         exit()
     if response_test.json() == []:
         print("Error: Date may be not valid.")
-        return -1
         exit()
 
     for id in ids:
@@ -75,8 +73,12 @@ def update_csv(date):
         result = push_to_github()
         return result
     else:
-        return 2
+        return "Error while updating and pushing data."
 
+
+# if __name__ == "__main__":
+#     DATE = "250225"
+#     update_csv(DATE)
 
 def push_to_github():
     repo_path = os.getcwd()
@@ -94,9 +96,10 @@ def push_to_github():
         commit_message = f"Update data {datetime.now().strftime('%Y-%m-%d %H:%M')}"
         repo.index.commit(commit_message)
         origin = repo.remote(name="origin")
+
         origin.push(refspec=f"{branch_name}:{branch_name}")
         print(f"Changes pushed to GitHub on branch '{branch_name}'.")
-        return 1
+        return "Changes pushed to Github."
     else:
         print("No changes detected. Nothing to push.")
-        return 2
+        return "No changes detected. Nothing to push."
