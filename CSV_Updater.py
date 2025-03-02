@@ -77,7 +77,7 @@ def update_csv(date, git_path):
     else:
         return 2
 
-def push_to_github():
+def push_to_github(repo_path):
     repo_path = os.getcwd()
     repo = git.Repo(repo_path)
 
