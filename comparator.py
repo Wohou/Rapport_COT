@@ -190,6 +190,7 @@ with tab3:
     st.session_state.Valid_date = False
     st.session_state.password_check = False
     push_password = st.secrets["github"]["push_password"]
+    git_path = st.secrets["github"]["git_path"]
     array = ["Please wait...", "Finish !", "Error with the update of the file"]
     st.markdown('<h3 style="margin-bottom:50px;text-align:center;font-weight:bold;font-size:40px;">🔮 Update 🔮</h3>', unsafe_allow_html=True)
 
@@ -214,7 +215,7 @@ with tab3:
             status_message = st.empty()
             status_message.write(array[0])
             with st.spinner("Processing..."):
-                result = update_csv(Date_Rapport)
+                result = update_csv(Date_Rapport, git_path)
             if result == 1:
                 status_message.success(array[1])
             else:

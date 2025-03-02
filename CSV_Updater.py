@@ -70,32 +70,28 @@ def update_data(date):
     print("All dones! " + str(iteration) + " files updated.")
     return iteration
 
-def update_csv(date):
+def update_csv(date, git_path):
     if update_data(date) > 0:
-        result = push_to_github()
+        result = push_to_github(git_path)
         return result
     else:
         return 2
 
-
 def push_to_github():
     repo_path = os.getcwd()
     repo = git.Repo(repo_path)
-    branch_name = "test"
-
-    if branch_name not in repo.branches:
-        print(f"Branch '{branch_name}' does not exist locally. Creating it...")
-        repo.git.checkout("-b", branch_name)
-    else:
-        repo.git.checkout(branch_name)
 
     if repo.is_dirty(untracked_files=True):
         repo.git.add("csv/")
         commit_message = f"Update data {datetime.now().strftime('%Y-%m-%d %H:%M')}"
         repo.index.commit(commit_message)
+
         origin = repo.remote(name="origin")
+        branch_name = "main"
+
+        # Forcer l'utilisation de SSH pour le push
         origin.push(refspec=f"{branch_name}:{branch_name}")
-        print(f"Changes pushed to GitHub on branch '{branch_name}'.")
+        print("Changes pushed to GitHub.")
         return 1
     else:
         print("No changes detected. Nothing to push.")
