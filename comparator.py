@@ -1,7 +1,9 @@
 import streamlit as st
 import pandas as pd
 import csv
+import re
 from datetime import datetime, timedelta
+from CSV_up_test import update_csv
 
 st.set_page_config(
     page_title="Comparator COT",
@@ -35,7 +37,7 @@ def update_next_report():
 #-------------------------Title------------------------------#
 
 st.markdown('<h3 style="text-align:center;font-weight:bold;font-size:50px;">Commitments of Traders</h3>', unsafe_allow_html=True)
-tab1, tab2 = st.tabs(["Comparateur", "Classement"])
+tab1, tab2, tab3 = st.tabs(["Comparateur", "Classement", "Update"])
 
 #-------------------Comparateur Tab--------------------------#
 
@@ -181,3 +183,36 @@ with tab2:
         sorted_data_short = sorted(zip(actif_short, difference_short), key=lambda x: abs(x[1]), reverse=True)
         for i, (actif, difference) in enumerate(sorted_data_short):
             st.markdown(f'<p style="font-weight:bold;font-size:20px;border-radius:2%;">{i+1}. {actif}: <span style="color:#FF0000;">{difference}</span></p>', unsafe_allow_html=True)
+
+#-------------------Update Tab--------------------------#
+
+with tab3:
+    st.session_state.Valid_date = False
+    push_text = st.secrets["github"]["push_text"]
+
+    st.write(f"Le mot de passe est : `{push_text}`")
+    array = ["Please wait...", "Finish !"]
+    st.markdown('<h3 style="margin-bottom:50px;text-align:center;font-weight:bold;font-size:40px;">🔮 Update 🔮</h3>', unsafe_allow_html=True)
+
+    if "Date_chose" not in st.session_state:
+        st.session_state.Date_chose = False
+    if st.button("Update"):
+        st.session_state.Date_chose = not st.session_state.Date_chose
+
+    if st.session_state.Date_chose:
+        st.write("Reminder : YYMMDD")
+        Date_Rapport = st.text_input("Chose a Date", "YYMMDD")
+
+        regex = r"^(2[5-9]|[3-9]\d)(0[1-9]|1[0-2])(0[1-9]|[12]\d|30|31)$"
+
+        if re.match(regex, Date_Rapport):
+            st.write("✅ Date :", Date_Rapport[:2], Date_Rapport[2:4], Date_Rapport[4:])
+            st.session_state.Valid_date = True
+        else:
+            st.write("❌ Error in the date.")
+
+    if st.session_state.Valid_date:
+        if st.button("Update ! "):
+            st.write(array[0])
+            result = update_csv(Date_Rapport)
+            st.write("result : ", result)
