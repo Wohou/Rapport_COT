@@ -184,35 +184,39 @@ with tab2:
         for i, (actif, difference) in enumerate(sorted_data_short):
             st.markdown(f'<p style="font-weight:bold;font-size:20px;border-radius:2%;">{i+1}. {actif}: <span style="color:#FF0000;">{difference}</span></p>', unsafe_allow_html=True)
 
-#-------------------Update Tab--------------------------#
+#----------------------Update Tab------------------------------#
 
 with tab3:
     st.session_state.Valid_date = False
-    push_text = st.secrets["github"]["push_text"]
-
-    st.write(f"Le mot de passe est : `{push_text}`")
-    array = ["Please wait...", "Finish !"]
+    st.session_state.password_check = False
+    push_password = st.secrets["github"]["push_password"]
+    array = ["Please wait...", "Finish !", "Error with the update of the file"]
     st.markdown('<h3 style="margin-bottom:50px;text-align:center;font-weight:bold;font-size:40px;">🔮 Update 🔮</h3>', unsafe_allow_html=True)
 
-    if "Date_chose" not in st.session_state:
-        st.session_state.Date_chose = False
-    if st.button("Update"):
-        st.session_state.Date_chose = not st.session_state.Date_chose
+    Date_Rapport = st.text_input("Chose a Date").strip()
+    st.write("Reminder : YYMMDD")
 
-    if st.session_state.Date_chose:
-        st.write("Reminder : YYMMDD")
-        Date_Rapport = st.text_input("Chose a Date", "YYMMDD")
+    regex = r"^(2[5-9]|[3-9]\d)(0[1-9]|1[0-2])(0[1-9]|[12]\d|30|31)$"
 
-        regex = r"^(2[5-9]|[3-9]\d)(0[1-9]|1[0-2])(0[1-9]|[12]\d|30|31)$"
-
-        if re.match(regex, Date_Rapport):
-            st.write("✅ Date :", Date_Rapport[:2], Date_Rapport[2:4], Date_Rapport[4:])
-            st.session_state.Valid_date = True
-        else:
-            st.write("❌ Error in the date.")
+    if re.match(regex, Date_Rapport):
+        st.write("✅ Date :", Date_Rapport[:2], Date_Rapport[2:4], Date_Rapport[4:])
+        st.session_state.Valid_date = True
+    elif len(Date_Rapport) > 1:
+        st.write("❌ Error in the date.")
 
     if st.session_state.Valid_date:
-        if st.button("Update ! "):
-            st.write(array[0])
-            result = update_csv(Date_Rapport)
-            st.write("result : ", result)
+        password = st.text_input("password", type="password")
+        if password == push_password:
+            st.session_state.password_check = True
+
+    if st.session_state.Valid_date and st.session_state.password_check:
+        if st.button("Update !"):
+            status_message = st.empty()
+            status_message.write(array[0])
+            with st.spinner("Processing..."):
+                result = update_csv(Date_Rapport)
+            if result == 1:
+                status_message.success(array[1])
+            else:
+                status_message.error(array[2])
+
