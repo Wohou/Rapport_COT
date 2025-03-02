@@ -3,7 +3,7 @@ import pandas as pd
 import csv
 import re
 from datetime import datetime, timedelta
-from CSV_up_test import update_csv
+from CSV_Updater import update_csv
 
 st.set_page_config(
     page_title="Comparator COT",
