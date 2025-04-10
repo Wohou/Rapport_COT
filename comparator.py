@@ -37,7 +37,8 @@ def update_next_report():
 #-------------------------Title------------------------------#
 
 st.markdown('<h3 style="text-align:center;font-weight:bold;font-size:50px;">Commitments of Traders</h3>', unsafe_allow_html=True)
-tab1, tab2, tab3 = st.tabs(["Comparateur", "Classement", "Update"])
+# tab1, tab2, tab3 = st.tabs(["Comparateur", "Classement", "Update"])
+tab1, tab2 = st.tabs(["Comparateur", "Classement"])
 
 #-------------------Comparateur Tab--------------------------#
 
