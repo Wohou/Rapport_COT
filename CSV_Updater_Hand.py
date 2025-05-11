@@ -6,7 +6,7 @@ ids_name = ["AUD", "BRL", "BTC", "CAD", "CHF", "COPPER", "DOW JONES", "ETH", "EU
 
 ids = ["232741F","102741F","133741F","090741F","092741F","085692F","124603F","146021F","099741F","023651F","096742F","088691F","097741F","095741F","098662F","20974%2BF","112741F","067651F","13874%2BF","084691F","001602F","122741F"]
 
-date = "250415"
+date = "250506"
 
 def change_date(date_str):
     annee = date_str[:2]
@@ -52,7 +52,7 @@ for id in ids:
             if key in item:
                 key_find.append(item[key])
 
-    print("Actually collecting data of " + name + " from " + change_date(date) + "...")
+    print("Currently collecting data of " + name + " from " + change_date(date) + "...")
     new_line = change_date(date) + "," + key_find[1] + "," + key_find[2] + "," + key_find[3] + "," + key_find[4] + "," + str(int(key_find[1]) - int(key_find[2])) + ",\n"
     if lines[+1] != new_line:
         iteration += 1
