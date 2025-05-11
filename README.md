@@ -7,3 +7,4 @@ The goal of the project is to implement a easy way to compare different financia
 ----
 Developped and hosted with streamlit (link bellow)
 ## [RAPPORT COT](https://rapport-cot.streamlit.app/)
+## <a href="https://rapport-cot.streamlit.app/" target="_blank">RAPPORT COT</a>
