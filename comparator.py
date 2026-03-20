@@ -82,7 +82,7 @@ with tab1:
     available_dates = Get_dates()
     chosen_date = st.select_slider('Selectionne une date', available_dates, value=available_dates[25])
     selected_entries_count = available_dates.index(chosen_date) + 1
-    st.markdown(f"Nombre de jours sélectionnés : **{selected_entries_count}**")
+    st.markdown(f"Nombre de rapports sélectionnés : **{selected_entries_count}**")
     get_next_date()
     col1, col2 = st.columns(2)
 
