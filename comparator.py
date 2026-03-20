@@ -1,9 +1,7 @@
 import streamlit as st
 import pandas as pd
 import csv
-import re
 from datetime import datetime, timedelta
-from CSV_Updater import update_csv
 
 st.set_page_config(
     page_title="Comparator COT",
@@ -11,36 +9,51 @@ st.set_page_config(
     layout="wide",
 )
 
-#-------------------Date of the next report--------------------------#
+def format_date_fr(date_value):
+    mois_fr = [
+        "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+        "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+    ]
+    return f"{date_value.day:02d} {mois_fr[date_value.month - 1]} {date_value.year}"
+
+#------------------- Date of the next report --------------------------#
 def update_next_report():
-    list_day = []
-    with open("next_report.csv", newline="") as file:
-        reader = csv.reader(file, delimiter=",")
-        for row in reader:
-            list_day.append(row[0])
+    try:
+        list_day = []
+        with open("next_report.csv", newline="") as file:
+            reader = csv.reader(file, delimiter=",")
+            for row in reader:
+                if row:
+                    list_day.append(row[0])
 
+        today = datetime.today().date()
 
-    today = datetime.today().date()
+        upcoming_report = []
+        for event in list_day:
+            try:
+                event_date = datetime.strptime(event, '%m/%d/%y').date()
+            except ValueError:
+                continue
+            if event_date >= today:
+                upcoming_report.append(event_date)
 
-    upcoming_report = []
-    for event in list_day:
-        event_date = datetime.strptime(event, '%m/%d/%y').date()
-        if event_date >= today:
-            upcoming_report.append(event_date)
+        if upcoming_report:
+            next_event = min(upcoming_report, key=lambda x: x - today)
+            if next_event == today:
+                return format_date_fr(next_event), True
+            else:
+                return format_date_fr(next_event), False
 
-    if upcoming_report:
-        next_event = min(upcoming_report, key=lambda x: x - today)
-        if next_event == today:
-            return str(next_event.strftime('%d/%B/%Y').replace("/", " ")), True
-        else:
-            return str(next_event.strftime('%d/%B/%Y').replace("/", " ")), False
-#-------------------------Title------------------------------#
+        return None, False
+    except Exception:
+        return None, False
+#------------------------- Title ------------------------------#
 
 st.markdown('<h3 style="text-align:center;font-weight:bold;font-size:50px;">Commitments of Traders</h3>', unsafe_allow_html=True)
 # tab1, tab2, tab3 = st.tabs(["Comparateur", "Classement", "Update"])
 tab1, tab2 = st.tabs(["Comparateur", "Classement"])
 
-#-------------------Comparateur Tab--------------------------#
+#------------------- Comparateur Tab --------------------------#
 
 with tab1:
     st.markdown('<h3 style="text-align:center;font-weight:bold;font-size:40px;">⚖️ Comparateur d\'actifs financiers ⚖️</h3>', unsafe_allow_html=True)
@@ -57,17 +70,23 @@ with tab1:
     def get_next_date():
         data_next_report = update_next_report()
         date_formated = data_next_report[0]
-        st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {date_formated})</h3>', unsafe_allow_html=True)
-        if data_next_report[1] == True:
-            st.markdown('<h3 style="text-align:left;font-size:15px;">Un nouveau rapport est disponible aujourd\'hui !</h3>', unsafe_allow_html=True)
+        if date_formated != None:
+            st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:20px;">(📅 Date du prochain rapport : {date_formated})</h3>', unsafe_allow_html=True)
+            if data_next_report[1] == True:
+                st.markdown('<h3 style="text-align:left;font-size:15px;">Un nouveau rapport est disponible aujourd\'hui !</h3>', unsafe_allow_html=True)
+        else:
+            st.markdown('<h3 style="text-align:left;font-weight:bold;font-size:20px;">Aucune Date disponnible pour le prochain rapport</h3>', unsafe_allow_html=True)
 
 
     st.markdown('<p style="margin-top:20px"></p>', unsafe_allow_html=True)
-    chosen_date = st.select_slider('Selectionne une date', Get_dates(), value=Get_dates()[25])
+    available_dates = Get_dates()
+    chosen_date = st.select_slider('Selectionne une date', available_dates, value=available_dates[25])
+    selected_entries_count = available_dates.index(chosen_date) + 1
+    st.markdown(f"Nombre de jours sélectionnés : **{selected_entries_count}**")
     get_next_date()
     col1, col2 = st.columns(2)
 
-#------Here Update the list of currency when you add a new one, for both selectbox | Order is impoortant---------------------------------#
+#------ Here Update the list of currency when you add a new one, for both selectbox | Order is impoortant ---------------------------------#
     with col1:
         chosen_currency_1 = st.selectbox('Premier actif', ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'JPY', 'AUD', 'NZD', 'MXN', 'BRL', 'ZAR', 'BTC', 'ETH', 'OIL', 'GAS', 'WHEAT', 'GOLD', 'SILVER', 'COPPER', 'S&P 500', 'NASDAQ-100', 'DOW JONES'])
         chosen_file_name_1 = "csv/" + chosen_currency_1 + ".csv"
@@ -130,18 +149,18 @@ with tab1:
         return "color: %s" % color
 
     df_1 = pd.DataFrame(data_1, columns=["Date", "Change long", "Change short", "Net position"])
-    df_1_styled = df_1.style.applymap(format_value, subset=["Change long", "Change short", "Net position"])
+    df_1_styled = df_1.style.map(format_value, subset=["Change long", "Change short", "Net position"])
 
     df_2 = pd.DataFrame(data_2, columns=["Date", "Change long", "Change short", "Net position"])
-    df_2_styled = df_2.style.applymap(format_value, subset=["Change long", "Change short", "Net position"])
+    df_2_styled = df_2.style.map(format_value, subset=["Change long", "Change short", "Net position"])
 
     with col1:
         st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:30px;">{chosen_currency_1}</h3>', unsafe_allow_html=True)
-        st.dataframe(df_1_styled, hide_index=True, use_container_width=True, height=len(df_1) * 36)
+        st.dataframe(df_1_styled, hide_index=True, width="stretch", height=len(df_1) * 36)
 
     with col2:
         st.markdown(f'<h3 style="text-align:left;font-weight:bold;font-size:30px;">{chosen_currency_2}</h3>', unsafe_allow_html=True)
-        st.dataframe(df_2_styled, hide_index=True, use_container_width=True, height=len(df_1) * 36)
+        st.dataframe(df_2_styled, hide_index=True, width="stretch", height=len(df_1) * 36)
 
 
 #-------------------Classement Tab--------------------------#
@@ -185,39 +204,4 @@ with tab2:
         for i, (actif, difference) in enumerate(sorted_data_short):
             st.markdown(f'<p style="font-weight:bold;font-size:20px;border-radius:2%;">{i+1}. {actif}: <span style="color:#FF0000;">{difference}</span></p>', unsafe_allow_html=True)
 
-#----------------------Update Tab------------------------------#
-# For now I let it commented because It don't work as expected
-# with tab3:
-#     st.session_state.Valid_date = False
-#     st.session_state.password_check = False
-#     push_password = st.secrets["github"]["push_password"]
-#     git_path = st.secrets["github"]["push_path"]
-#     array = ["Please wait...", "Finish !", "Error with the update of the file"]
-#     st.markdown('<h3 style="margin-bottom:50px;text-align:center;font-weight:bold;font-size:40px;">🔮 Update 🔮</h3>', unsafe_allow_html=True)
 
-#     Date_Rapport = st.text_input("Chose a Date").strip()
-#     st.write("Reminder : YYMMDD")
-
-#     regex = r"^(2[5-9]|[3-9]\d)(0[1-9]|1[0-2])(0[1-9]|[12]\d|30|31)$"
-
-#     if re.match(regex, Date_Rapport):
-#         st.write("✅ Date :", Date_Rapport[:2], Date_Rapport[2:4], Date_Rapport[4:])
-#         st.session_state.Valid_date = True
-#     elif len(Date_Rapport) > 1:
-#         st.write("❌ Error in the date.")
-
-#     if st.session_state.Valid_date:
-#         password = st.text_input("password", type="password")
-#         if password == push_password:
-#             st.session_state.password_check = True
-
-#     if st.session_state.Valid_date and st.session_state.password_check:
-#         if st.button("Update !"):
-#             status_message = st.empty()
-#             status_message.write(array[0])
-#             with st.spinner("Processing..."):
-#                 result = update_csv(Date_Rapport, git_path)
-#             if result == 1:
-#                 status_message.success(array[1])
-#             else:
-#                 status_message.error(array[2])
