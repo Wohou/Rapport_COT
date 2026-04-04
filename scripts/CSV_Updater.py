@@ -26,7 +26,8 @@ def change_date(date_str):
     return (jour + "/" + mois + "/" + annee)
 
 def fetch_data(date_str, identifier):
-    response = session.get(f"{base_url}{date_str}{identifier}")
+    # AJOUT ICI : paramètre timeout=15 pour éviter le blocage infini
+    response = session.get(f"{base_url}{date_str}{identifier}", timeout=15)
     if response.status_code != 200:
         raise Exception("Error: API request unsuccessful.")
     data = response.json()
@@ -54,13 +55,19 @@ while current_date <= end_date:
 
     # Check if at least one asset has data for this date
     for identifier in ids:
-        response_test = session.get(f"{base_url}{date}{identifier}")
-        if response_test.status_code == 200:
-            candidate_data = response_test.json()
-            if candidate_data != []:
-                seed_identifier = identifier
-                seed_data = candidate_data
-                break
+        try:
+            # AJOUT ICI : timeout=15 et bloc try...except
+            response_test = session.get(f"{base_url}{date}{identifier}", timeout=15)
+            if response_test.status_code == 200:
+                candidate_data = response_test.json()
+                if candidate_data != []:
+                    seed_identifier = identifier
+                    seed_data = candidate_data
+                    break
+        except requests.exceptions.RequestException as e:
+            # Si le serveur met plus de 15 secondes à répondre ou échoue, on passe au suivant
+            print(f"Erreur de connexion pour tester {identifier} : {e}")
+            continue
 
     # If date is invalid/empty, we ignore and move to the next day
     if seed_identifier is None:
