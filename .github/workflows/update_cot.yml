@@ -2,20 +2,14 @@ name: Rapport COT - Update CSV Data
 
 on:
   schedule:
-    # Hour server is in UTC.
-    # 6:00 UTC correspond to 7:00 in France (winter time) or 8:00 (summer time).
-    # '6' mean Saturday.
     - cron: '0 6 * * 6'
-
-  # We add a workflow_dispatch trigger to be able to launch the workflow manually from GitHub Actions tab.
   workflow_dispatch:
 
 jobs:
   update-csv-data:
     runs-on: ubuntu-latest
-    timeout-minutes: 10 # <-- AJOUT ICI : Coupe le workflow s'il dure plus de 10 minutes
+    timeout-minutes: 15
 
-    # IMPORTANT : Give github the autorization to push on the repo
     permissions:
       contents: write
 
@@ -32,15 +26,18 @@ jobs:
         run: |
           pip install requests
 
-      - name: Python Script Execution
-        # We run the script that is in the scripts/ folder
-        run: python scripts/CSV_Updater.py
+      - name: Python Script Execution (with Retries)
+        # On utilise cette action pour gérer les relances
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 15
+          max_attempts: 5
+          retry_wait_seconds: 300
+          command: python scripts/CSV_Updater.py
 
       - name: Save and Push CSV Files to GitHub
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
-
           git add csv/
-
           git diff --staged --quiet || (git commit -m "Automated Update 📈" && git push)
